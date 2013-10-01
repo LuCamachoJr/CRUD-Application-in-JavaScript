@@ -1,4 +1,4 @@
-ASD-Term1310
+Full Sail University
 ============
 
-Full Sail University Course: Advanced Scalable Data Infrastructures
+Advanced Scalable Data Infrastructures Term 1310
