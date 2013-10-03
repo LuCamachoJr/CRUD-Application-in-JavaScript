@@ -78,9 +78,6 @@ ul#clearList li {
                 margin-left: auto;
                 margin-right: auto;
 }
-#storage .ui-btn-inner {
-    display: none;
-}
 header h2 {
     font-family: "chalkduster", cursive;
 
