@@ -256,6 +256,9 @@ $('#addProject').on('pageinit', function(){
     $('.ui-block-a').on("click", function(){
         window.location="#pageOne"
         });
+    $('.ui-block-b').on("click", function(){
+        $('#projectData')[0].reset();
+    });
 
     console.log("addProject page is loaded");
 
