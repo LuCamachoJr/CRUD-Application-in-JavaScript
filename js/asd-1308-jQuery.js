@@ -253,6 +253,9 @@ $("#testData").on("click", function(){
 
 
 $('#addProject').on('pageinit', function(){
+    $('.ui-block-a').on("click", function(){
+        window.location="#pageOne"
+        });
 
     console.log("addProject page is loaded");
 
