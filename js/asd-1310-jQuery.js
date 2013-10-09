@@ -25,6 +25,14 @@ $('#addProject').on('pageinit', function(){
         $('#projectData')[0].reset();
     });
 
+    $('#storage').on("click", function(){
+        if (localStorage.length === 0) {
+            alert("No Projects or Ideas have been saved");
+        }else{
+            window.location="#viewProjects"
+        }
+    });
+
     console.log("addProject page is loaded");
 
     var dForm = $('#projectData');
@@ -41,7 +49,7 @@ $('#addProject').on('pageinit', function(){
         }
 
     });
-    $('#projectData')[0].reset();
+    //$('#projectData')[0].reset();
 });
 function storeData(key) {
 
@@ -231,7 +239,7 @@ $.each(localStorage, function(i){
         "<p>"+item.startDate[1]+"</p>"+
         "<h3>"+item.status[0]+"</h3>"+
         "<p>"+item.status[1]+"</p>"+
-        "<a href='#' class='editData' data-role='' id='"+key+"'>Edit Data</a>"+
+        "<a href='#addProject' class='editData' data-role='' id='"+key+"'>Edit Data</a>"+
         "<br>"+"<br>"+
         "<a href='#' data-icon='' data-role='' class='deleteData' id='"+key+"'>Delete Data</a>"+
         "<br>"+"<br>");
@@ -245,7 +253,8 @@ $.each(localStorage, function(i){
 
 
     //Delete Function
-    $('.deleteData').on('click', function(){
+    $('.deleteData').on('click', function(e){
+        e.preventDefault();
         var ask = confirm("Are you sure you want to delete Data?");
         if(ask){
             localStorage.removeItem(this.id);
@@ -258,7 +267,8 @@ $.each(localStorage, function(i){
     // End of Delete function
 
     //Edit Function
-    $('.editData').on('click', function(){
+    $('.editData').on('click', function(e){
+        e.preventDefault();
         console.log(this.id);
         var key = (this.id);
         console.log(key);
