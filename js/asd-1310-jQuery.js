@@ -7,29 +7,35 @@
  * Reference js from previous courses
  * refactor functions using jquery
  */
+//global ajax setting
+$.ajaxSetup({
+    error: function (err) {
+        console.log("error", err);
+    }
+});
 
 //First page code for ID:pageOne
-$('#pageOne').on('pageinit', function(){
+$('#pageOne').on('pageinit', function () {
     //code needed for home page goes here
     console.log("pageOne page is Loaded");
 });
 
 
 //Second page code for ID:addProject Form
-$('#addProject').on('pageinit', function(){
-    $('.ui-block-a').on("click", function(){
-        window.location="#pageOne"
+$('#addProject').on('pageinit', function () {
+    $('.ui-block-a').on("click", function () {
+        window.location = "#pageOne"
     });
 
-    $('.ui-block-b').on("click", function(){
+    $('.ui-block-b').on("click", function () {
         $('#projectData')[0].reset();
     });
 
-    $('#storage').on("click", function(){
+    $('#storage').on("click", function () {
         if (localStorage.length === 0) {
             alert("No Projects or Ideas have been saved");
-        }else{
-            window.location="#viewProjects"
+        } else {
+            window.location = "#viewProjects"
         }
     });
 
@@ -38,25 +44,24 @@ $('#addProject').on('pageinit', function(){
     var dForm = $('#projectData');
 
     dForm.validate({
-        invalidHandler: function(form, validator) {
-        },
-        submitHandler: function() {
+        invalidHandler: function (form, validator) {},
+        submitHandler: function () {
             dForm.serializeArray();
-                storeData();
+            storeData();
 
             console.log(dForm.serializeArray());
             console.log(dForm);
         }
 
     });
-    //$('#projectData')[0].reset();
 });
+
 function storeData(key) {
 
-    if(!key){
+    if (!key) {
         var id = Math.floor(Math.random() * 100001);
-    }else{
-        id=key;
+    } else {
+        id = key;
     }
     var formItems = {};
     formItems.catType = ["Choose A Category Type:", $(':selected').val()];
@@ -66,17 +71,17 @@ function storeData(key) {
     formItems.status = ["Globalize:", $('[name="globalizationOptions"]:checked').val()];
     localStorage.setItem(id, JSON.stringify(formItems));
     console.log(formItems);
-    alert("Saving "+formItems.catType[1]+" "+id+"! Select Display Data Link Above To View Or Edit Data!");
+    alert("Saving " + formItems.catType[1] + " " + id + "! Select Display Data Link Above To View Or Edit Data!");
 
     // window.location.reload();
-    if(formItems.catType[1]==="Project"){
+    if (formItems.catType[1] === "Project") {
 
-      //  $('#projectData')[0].reset();
+        //  $('#projectData')[0].reset();
         window.location = '#viewProjects';
         createList();
 
-    }else{
-     //   $('#projectData')[0].reset();
+    } else {
+        //   $('#projectData')[0].reset();
         window.location = '#viewProjects';
 
         return false;
@@ -108,11 +113,11 @@ function storeData(key) {
      //  window.location = "#";
      });*/
 
-    $('#storage').on('click', function(){
-        if(formItems.catType[1]==="Project"){
+    $('#storage').on('click', function () {
+        if (formItems.catType[1] === "Project") {
             window.location = '#viewProjects';
 
-        }else{
+        } else {
             window.location = '#viewIdeas'
 
             return false;
@@ -130,219 +135,189 @@ $('#viewProjects').on('pageinit', function () {
     console.log("viewProjects page is Loaded");
     createList();
 
-          });
+});
 
-$('#viewProject').on('click', function(){
+$('#viewProject').on('click', function () {
     if (localStorage.length === 0) {
         alert("No Projects or Ideas have been saved");
-    }else{
-        window.location="#viewProjects"
+    } else {
+        window.location = "#viewProjects"
     }
 });
 
 
-//xml loaded via ajax
-$('#viewIdeas').on('pageinit', function(){
+//xml loaded via AJAX
+$('#viewIdeas').on('pageinit', function () {
     console.log("viewIdeas page is Loaded");
-        console.log("click Ideas function");
+    console.log("click Ideas function");
 
-            alert("XML Data via ajax Loaded");
+    alert("XML Data via ajax Loaded");
 
-            //testData function utilizes activities.json file to populate the form with Data.
-            //For testing purposes.
-            //testData();
 
-        $("#ideaJson").empty();
+    $("#ideaJson").empty();
 
-        $.ajax({
-            url: "xhr/activity.xml",
-            type: "GET",
-            dataType: "xml",
-            success: function(activityxml){
-                console.log(activityxml);
-                $("#ideaXml").empty();
-                $(activityxml).find("Activity").each(function(){
-                    console.log("Activity");
-                    var item = $(this);
-                    console.log(item);
-                    var makeSubList = $("<li data-theme='a' data-role=''></li>");
-                    var makeSubLi = $(
-                        "<h1>"+item.find('catType').text()+"</h1>"+
-                        "<li>"+item.find('newID').text()+"</li>");
-                    var makeLink = $("<a href='#'></a>");
+    $.ajax({
+        url: "xhr/activity.xml",
+        type: "GET",
+        dataType: "xml",
+        success: function (activityxml, status) {
+            console.log(status, activityxml);
+            $("#ideaXml").empty();
+            $(activityxml).find("Activity").each(function () {
+                console.log("Activity");
+                var item = $(this);
+                console.log(item);
+                var makeSubList = $("<li data-theme='a' data-role=''></li>");
+                var makeSubLi = $("<li>" + item.find('newID').text() + "</li>");
+                var makeLink = $("<a href='#'></a>");
 
-                    makeLink.on('click', function(){
-                        console.log("Dynamically creating page container for xml details");
-                        var newIdeaData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
-                            + item.find('catType').text() + "</h1><a href='#viewIdeas' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
-                            + item.find('newID').text() + "</li><li><br>"
-                            + item.find('newNote').text() + "</li><li><br>"
-                            + item.find('startDate').text() + "</li><li><br> "
-                            + item.find('status').text() + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+                makeLink.on('click', function () {
+                    console.log("Dynamically creating page container for xml details");
+                    var newIdeaData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + item.find('catType').text() + "</h1><a href='#viewIdeas' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + item.find('newID').text() + "</li><li><br>" + item.find('newNote').text() + "</li><li><br>" + item.find('startDate').text() + "</li><li><br> " + item.find('status').text() + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
-                        newIdeaData.appendTo($.mobile.pageContainer);
+                    newIdeaData.appendTo($.mobile.pageContainer);
 
-                        $.mobile.changePage(newIdeaData);
-                    });
-                    makeLink.html(makeSubLi);
-                    makeSubList.append(makeLink).appendTo("#ideaXml");
-                    }); // end of activityxml function
-                $('#ideaXml').listview('refresh');
-               // var data = $.parseXML()
-
-                //Start off with an empty list every time to get the latest from server
-             /*  $('#ideaXml').empty();
-
-                //add the activity items as list
-                $.each(activities, function(i, activity){
-                    $('#ideaXml').append(generateActivityLink(activity));
+                    $.mobile.changePage(newIdeaData);
                 });
-
-                //refresh the list view to show the latest changes
-                $('#ideaXml').listview('refresh'); */
-
-            } //end of success function
-
-        }); //end of ajax
-            console.log("AJAX");
+                makeLink.html(makeSubLi);
+                makeSubList.append(makeLink).appendTo("#ideaXml");
+            }); // end of activityxml function
+            $('#ideaXml').listview('refresh');
+        } //end of success function
+    }); //end of ajax
+    console.log("AJAX");
 
 }); //end of viewProjects
 
-//global ajax setting
-$.ajaxSetup({
-    error: function(err){
-        console.log("error", err);
-    }
-
-});
 
 // JSON loaded via AJAX
-$('#viewCompleted').on('pageinit', function(){
+$('#viewCompleted').on('pageinit', function () {
     console.log("viewCompleted page is Loaded");
-        console.log("click Completed function");
-            alert("JSON Data via ajax Loaded");
-            //testData function utilizes activities.json file to populate the form with Data.
-            //For testing purposes.
-            //testData();
-            $.getJSON("xhr/activity.json", function(activities, status){
-                console.log(status, activities);
-                //Start off with an empty list every time to get the latest from server
-                $('#thinkTankList').empty();
+    console.log("click Completed function");
+    alert("JSON Data via ajax Loaded");
 
-                //add the activity items as list
-                $.each(activities, function(i, activity){
-                    $('#thinkTankList').append(generateActivityLink(activity));
-                });
+    //AJAX Shortcut Method
+    $.getJSON("xhr/activity.json", function (activities, status) {
+        console.log(status, activities);
+        //Start off with an empty list every time to get the latest from server
+        $('#thinkTankList').empty();
 
-                //refresh the list view to show the latest changes
-                $('#thinkTankList').listview('refresh');
+        //add the activity items as list
+        $.each(activities, function (i, activity) {
+            $('#thinkTankList').append(generateActivityLink(activity));
+        });
 
-            });
+        //refresh the list view to show the latest changes
+        $('#thinkTankList').listview('refresh');
+
+    });
 });
 
-//R for read code functionality
-
-/*$.getJSON("js/activity.json", function(activities){
-    //Start off with an empty list every time to get the latest from server
-    $('#thinkTankList').empty();
-
-    //add the activity items as list
-    $.each(activities, function(i, activity){
-        $('#thinkTankList').append(generateActivityLink(activity));
-    });
-
-    //refresh the list view to show the latest changes
-    $('#thinkTankList').listview('refresh');
-
-});*/
-
 //creates a activity link list item
-function generateActivityLink(activity){
+
+function generateActivityLink(activity) {
 
     //create link to detail page
-    return '<li><a href="javascript:void(0)'
-        + '" onclick="goToActivityDetailPage(\''
-        + activity.catType
-        + '\',\''
-        + activity.newID +'\',\''+ activity.newNote +'\',\''+ activity.startDate +'\',\''+ activity.status +'\')">'
-        + activity.newID
-        + '</a></li>';
+    return '<li><a href="javascript:void(0)' + '" onclick="goToActivityDetailPage(\'' + activity.catType + '\',\'' + activity.newID + '\',\'' + activity.newNote + '\',\'' + activity.startDate + '\',\'' + activity.status + '\')">' + activity.newID + '</a></li>';
 }
 
-function goToActivityDetailPage(thinkTank,projectName,detailedNotes,initialize,globalize ){
+function goToActivityDetailPage(thinkTank, projectName, detailedNotes, initialize, globalize) {
 
     //create the page html template
-    var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
-        + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
-        + projectName + "</li><li><br>"
-        + detailedNotes + "</li><li><br>"
-        + initialize + "</li><li><br> "
-        + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editFn' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+    var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + projectName + "</li><li><br>" + detailedNotes + "</li><li><br>" + initialize + "</li><li><br> " + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editFn' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
     //append the new page to the page container
-    activityPage.appendTo( $.mobile.pageContainer );
+    activityPage.appendTo($.mobile.pageContainer);
 
     //go to the newly created page
-    $.mobile.changePage( activityPage );
+    $.mobile.changePage(activityPage);
 }
 
 
-//End of R code
-function createList(){
-$("#formList").empty();
-$.each(localStorage, function(i){
-    var key = localStorage.key(i);
-    var item = JSON.parse(localStorage.getItem(key));
-    console.log(item);
-    console.log(key);
+function createList() {
+    $("#formList").empty();
+    $.each(localStorage, function (i) {
+        var key = localStorage.key(i);
+        var item = JSON.parse(localStorage.getItem(key));
+        console.log(item);
+        console.log(key);
 
-    var makeSubList = $("<li data-theme='a' data-role=''"+item.startDate[1]+" ID "+key+"></li>");
-    var makeSubLi = $(
-        "<h1>"+item.catType[1]+"</h1>"+
+        var makeSubList = $("<li data-theme='a' data-role=''" + item.startDate[1] + " ID " + key + "></li>");
+        var makeSubLi = $(
+            "<h1>" + item.catType[1] + "</h1>" +
+                "<li>" + item.newID[1] + "</li>");
+        var makeLink = $("<a href='#' id='" + key + "'>Edit Data 123</a>");
+        makeLink.on('click', function () {
+            console.log("This is my key: " + this.id);
+            var newFormData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + item.catType[1] + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + item.newID[1] + "</li><li><br>" + item.newNote[1] + "</li><li><br>" + item.startDate[1] + "</li><li><br> " + item.status[1] + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' id='" + key + "' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' id='" + key + "' data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
-        "<li>"+item.newID[1]+"</li>");
+            newFormData.appendTo($.mobile.pageContainer);
 
-     /*   "<li>"+item.newNote[1]+"</li>"+
+            $.mobile.changePage(newFormData);
 
-        "<li>"+item.startDate[1]+"</li>"+
+            //Delete Function
+            $('.deleteData').on('click', function (e) {
+                e.preventDefault();
+                var ask = confirm("Are you sure you want to delete Data?");
+                if (ask) {
+                    localStorage.removeItem(this.id);
+                    alert("Data Deletion Process Complete!");
+                    location.reload();
+                } else {
+                    alert("Data Deletion Process Canceled.")
+                }
+            });
+            // End of Delete function
 
-        "<li>"+item.status[1]+"</li>"+
-        "<a href='#addProject' class='editData' data-role='' id='"+key+"'>Edit Data</a>");
-        "<br>"+"<br>"+
-        "<a href='#' data-icon='' data-role='' class='deleteData' id='"+key+"'>Delete Data</a>"+
-        "<br>"+"<br>");*/
+            //Edit Function
+            $('.editData').on('click', function () {
+                // e.preventDefault();
+                console.log(this.id);
+                var key = (this.id);
+                console.log(key);
+                var value = localStorage.getItem(this.id);
+                console.log(value);
+                var item = JSON.parse(value);
+                console.log(item);
+                $('#categoryType').val(item.catType[1]);
+                $('#newProject').val(item.newID[1]);
+                $('#detailTxt').val(item.newNote[1]);
+                $('#startDate').val(item.startDate[1]);
+                $('[name="globalizationOptions"]').val(item.status[1]);
 
-    var makeLink = $("<a href='#' id='"+key+"'>Edit Data 123</a>");
+                console.log(item.status[1]);
 
-    makeLink.on('click', function(){
-        console.log("This is my key: "+this.id);
-        var newFormData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
-            + item.catType[1] + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
-            + item.newID[1] + "</li><li><br>"
-            + item.newNote[1] + "</li><li><br>"
-            + item.startDate[1] + "</li><li><br> "
-            + item.status[1] + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' id='"+key+"' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' id='"+key+"' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+                $('#submitDataForm').on('click', function () {
 
-        newFormData.appendTo($.mobile.pageContainer);
+                    storeData(key);
+                    location.reload();
+                    console.log(key);
+                    window.location = '#viewProjects';
 
-        $.mobile.changePage(newFormData);
+                });
+            });
+        });
+        makeLink.html(makeSubLi);
+        makeSubList.append(makeLink).appendTo("#formList");
+
+        $("#formList").listview('refresh');
 
         //Delete Function
-        $('.deleteData').on('click', function(e){
+        $('.deleteData').on('click', function (e) {
             e.preventDefault();
             var ask = confirm("Are you sure you want to delete Data?");
-            if(ask){
+            if (ask) {
                 localStorage.removeItem(this.id);
                 alert("Data Deletion Process Complete!");
                 location.reload();
-            }else{
+            } else {
                 alert("Data Deletion Process Canceled.")
             }
         });
         // End of Delete function
 
         //Edit Function
-        $('.editData').on('click', function(){
+        $('.editData').on('click', function () {
             // e.preventDefault();
             console.log(this.id);
             var key = (this.id);
@@ -359,7 +334,7 @@ $.each(localStorage, function(i){
 
             console.log(item.status[1]);
 
-            $('#submitDataForm').on('click', function(){
+            $('#submitDataForm').on('click', function () {
 
                 storeData(key);
                 location.reload();
@@ -367,69 +342,9 @@ $.each(localStorage, function(i){
                 window.location = '#viewProjects';
 
             });
-        });
-    });
-    makeLink.html(makeSubLi);
-    makeSubList.append(makeLink).appendTo("#formList");
 
-    $("#formList").listview('refresh');
-
-    //Delete Function
-    $('.deleteData').on('click', function(e){
-        e.preventDefault();
-        var ask = confirm("Are you sure you want to delete Data?");
-        if(ask){
-            localStorage.removeItem(this.id);
-            alert("Data Deletion Process Complete!");
-            location.reload();
-        }else{
-            alert("Data Deletion Process Canceled.")
-        }
-    });
-    // End of Delete function
-
-    //Edit Function
-    $('.editData').on('click', function(){
-       // e.preventDefault();
-        console.log(this.id);
-        var key = (this.id);
-        console.log(key);
-        var value = localStorage.getItem(this.id);
-        console.log(value);
-        var item = JSON.parse(value);
-        console.log(item);
-        $('#categoryType').val(item.catType[1]);
-        $('#newProject').val(item.newID[1]);
-        $('#detailTxt').val(item.newNote[1]);
-        $('#startDate').val(item.startDate[1]);
-        $('[name="globalizationOptions"]').val(item.status[1]);
-
-        console.log(item.status[1]);
-
-        $('#submitDataForm').on('click', function(){
-
-         storeData(key);
-            location.reload();
-            console.log(key);
-            window.location = '#viewProjects';
 
         });
 
-
     });
-
-});
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
