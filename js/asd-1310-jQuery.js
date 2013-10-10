@@ -141,12 +141,45 @@ $('#viewIdeas').on('pageinit', function(){
         console.log("click Ideas function");
         if (localStorage.length === 0) {
             alert("There is no Data in Local Storage. XML Test Data Being Loaded");
+
             //testData function utilizes activities.json file to populate the form with Data.
             //For testing purposes.
             //testData();
+
+        $("#ideaJson").empty();
+
+        $.ajax({
+            url: "xhr/activity.json",
+            type: "GET",
+            dataType: "json",
+            success: function(activities, status){
+                console.log(status, activities);
+                //Start off with an empty list every time to get the latest from server
+                $('#ideaJson').empty();
+
+                //add the activity items as list
+                $.each(activities, function(i, activity){
+                    $('#ideaJson').append(generateActivityLink(activity));
+                });
+
+                //refresh the list view to show the latest changes
+                $('#ideaJson').listview('refresh');
+
+            }
+
+        });
+            console.log("AJAX");
         }
+});
+
+//global ajax setting
+$.ajaxSetup({
+    error: function(err){
+        console.log("error", err);
+    }
 
 });
+
 // JSON and YMAL loaded via AJAX
 $('#viewCompleted').on('pageinit', function(){
     console.log("viewCompleted page is Loaded");
@@ -156,7 +189,7 @@ $('#viewCompleted').on('pageinit', function(){
             //testData function utilizes activities.json file to populate the form with Data.
             //For testing purposes.
             //testData();
-            $.getJSON("js/activity.json", function(activities){
+            $.getJSON("xhr/activity.json", function(activities){
                 //Start off with an empty list every time to get the latest from server
                 $('#thinkTankList').empty();
 
@@ -205,10 +238,10 @@ function goToActivityDetailPage(thinkTank,projectName,detailedNotes,intalize,glo
 
     //create the page html template
     var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
-        + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content' data-theme=''><ul style='font-size: 20em' data-role='listview'></ul><li style='font-size: 20px;list-style: none;text-align: center'>"
-        + projectName + "</li><li style='font-size: 20px;list-style: none;text-align: center'><br>"
-        + detailedNotes + "</li><li style='font-size: 20px;list-style: none;text-align: center'><br>"
-        + intalize + "</li><li style='font-size: 20px;list-style: none;text-align: center'><br> "
+        + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
+        + projectName + "</li><li><br>"
+        + detailedNotes + "</li><li><br>"
+        + intalize + "</li><li><br> "
         + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editFn' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
     //append the new page to the page container
@@ -229,16 +262,16 @@ $.each(localStorage, function(i){
     console.log(key);
 
     var makeSubList = $("<li data-theme='a' data-role=''"+item.startDate[1]+" ID "+key+"></li>");
-    var makeSubLi = $("<h3>"+item.catType[0]+"</h3>"+
-        "<p>"+item.catType[1]+"<p>"+
-        "<h3>"+item.newID[0]+"</h3>"+
-        "<p>"+item.newID[1]+"</p>"+
-        "<h3>"+item.newNote[0]+"</h3>"+
-        "<p>"+item.newNote[1]+"</p>"+
-        "<h3>"+item.startDate[0]+"</h3>"+
-        "<p>"+item.startDate[1]+"</p>"+
-        "<h3>"+item.status[0]+"</h3>"+
-        "<p>"+item.status[1]+"</p>"+
+    var makeSubLi = $(
+        "<h1>"+item.catType[1]+"</h1>"+
+
+        "<li>"+item.newID[1]+"</li>"+
+
+        "<li>"+item.newNote[1]+"</li>"+
+
+        "<li>"+item.startDate[1]+"</li>"+
+
+        "<li>"+item.status[1]+"</li>"+
         "<a href='#addProject' class='editData' data-role='' id='"+key+"'>Edit Data</a>"+
         "<br>"+"<br>"+
         "<a href='#' data-icon='' data-role='' class='deleteData' id='"+key+"'>Delete Data</a>"+
@@ -267,8 +300,8 @@ $.each(localStorage, function(i){
     // End of Delete function
 
     //Edit Function
-    $('.editData').on('click', function(e){
-        e.preventDefault();
+    $('.editData').on('click', function(){
+       // e.preventDefault();
         console.log(this.id);
         var key = (this.id);
         console.log(key);
@@ -283,14 +316,14 @@ $.each(localStorage, function(i){
         $('[name="globalizationOptions"]').val(item.status[1]);
 
         console.log(item.status[1]);
-    //    $('#submitDataForm').prop('value','Save Changes');
-    //    $('#submitDataForm').prop('type','button');
-        $('#submitDataForm').on('click', function(){
-       // localStorage.setItem(this.id, JSON.stringify(edit));
-         storeData(key);
 
+        $('#submitDataForm').on('click', function(){
+
+         storeData(key);
+            location.reload();
             console.log(key);
             window.location = '#viewProjects';
+
         });
 
 
