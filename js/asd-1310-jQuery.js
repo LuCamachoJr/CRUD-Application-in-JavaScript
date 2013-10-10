@@ -7,6 +7,7 @@
  * Reference js from previous courses
  * refactor functions using jquery
  */
+
 //global ajax setting
 $.ajaxSetup({
     error: function (err) {
@@ -74,18 +75,11 @@ function storeData(key) {
     alert("Saving " + formItems.catType[1] + " " + id + "! Select Display Data Link Above To View Or Edit Data!");
 
     // window.location.reload();
-    if (formItems.catType[1] === "Project") {
 
-        //  $('#projectData')[0].reset();
         window.location = '#viewProjects';
         createList();
 
-    } else {
-        //   $('#projectData')[0].reset();
-        window.location = '#viewProjects';
 
-        return false;
-    }
     $('#projectData')[0].reset();
     // Working on adding effects to Logo
     /*       $('#projectData').fadeOut();
@@ -112,18 +106,6 @@ function storeData(key) {
 
      //  window.location = "#";
      });*/
-
-    $('#storage').on('click', function () {
-        if (formItems.catType[1] === "Project") {
-            window.location = '#viewProjects';
-
-        } else {
-            window.location = '#viewIdeas'
-
-            return false;
-        }
-    });
-
 }
 
 
@@ -164,20 +146,24 @@ $('#viewIdeas').on('pageinit', function () {
             console.log(status, activityxml);
             $("#ideaXml").empty();
             $(activityxml).find("Activity").each(function () {
-                console.log("Activity");
                 var item = $(this);
-                console.log(item);
                 var makeSubList = $("<li data-theme='a' data-role=''></li>");
                 var makeSubLi = $("<li>" + item.find('newID').text() + "</li>");
                 var makeLink = $("<a href='#'></a>");
 
                 makeLink.on('click', function () {
                     console.log("Dynamically creating page container for xml details");
-                    var newIdeaData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + item.find('catType').text() + "</h1><a href='#viewIdeas' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + item.find('newID').text() + "</li><li><br>" + item.find('newNote').text() + "</li><li><br>" + item.find('startDate').text() + "</li><li><br> " + item.find('status').text() + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+                    var newIdeaData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + item.find('catType').text() + "</h1><a href='#viewIdeas' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + item.find('newID').text() + "</li><li><br>" + item.find('newNote').text() + "</li><li><br>" + item.find('startDate').text() + "</li><li><br> " + item.find('status').text() + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editData' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
                     newIdeaData.appendTo($.mobile.pageContainer);
 
                     $.mobile.changePage(newIdeaData);
+                    $('.editData').on('click', function(){
+                        alert("xml data static edit function disabled");
+                    });
+                    $('.deleteData').on('click', function(){
+                        alert("xml data static delete function disabled");
+                    });
                 });
                 makeLink.html(makeSubLi);
                 makeSubList.append(makeLink).appendTo("#ideaXml");
@@ -231,6 +217,13 @@ function goToActivityDetailPage(thinkTank, projectName, detailedNotes, initializ
 
     //go to the newly created page
     $.mobile.changePage(activityPage);
+
+    $('.editFn').on('click', function(){
+        alert("JSON data static edit function disabled");
+    });
+    $('.deleteFn').on('click', function(){
+        alert("JSON data static delete function disabled");
+    });
 }
 
 
