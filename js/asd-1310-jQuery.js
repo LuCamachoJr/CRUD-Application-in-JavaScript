@@ -141,12 +141,12 @@ $('#viewProject').on('click', function(){
 });
 
 
-
+//xml loaded via ajax
 $('#viewIdeas').on('pageinit', function(){
     console.log("viewIdeas page is Loaded");
         console.log("click Ideas function");
-        if (localStorage.length === 0) {
-            alert("There is no Data in Local Storage. XML Test Data Being Loaded");
+
+            alert("XML Data via ajax Loaded");
 
             //testData function utilizes activities.json file to populate the form with Data.
             //For testing purposes.
@@ -158,25 +158,55 @@ $('#viewIdeas').on('pageinit', function(){
             url: "xhr/activity.xml",
             type: "GET",
             dataType: "xml",
-            success: function(activities, status){
-                console.log(status, activities);
+            success: function(activityxml){
+                console.log(activityxml);
+                $("#ideaXml").empty();
+                $(activityxml).find("Activity").each(function(){
+                    console.log("Activity");
+                    var item = $(this);
+                    console.log(item);
+                    var makeSubList = $("<li data-theme='a' data-role=''></li>");
+                    var makeSubLi = $(
+                        "<h1>"+item.find('catType').text()+"</h1>"+
+                        "<li>"+item.find('newID').text()+"</li>");
+                    var makeLink = $("<a href='#'></a>");
+
+                    makeLink.on('click', function(){
+                        console.log("Dynamically creating page container for xml details");
+                        var newIdeaData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
+                            + item.find('catType').text() + "</h1><a href='#viewIdeas' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
+                            + item.find('newID').text() + "</li><li><br>"
+                            + item.find('newNote').text() + "</li><li><br>"
+                            + item.find('startDate').text() + "</li><li><br> "
+                            + item.find('status').text() + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+
+                        newIdeaData.appendTo($.mobile.pageContainer);
+
+                        $.mobile.changePage(newIdeaData);
+                    });
+                    makeLink.html(makeSubLi);
+                    makeSubList.append(makeLink).appendTo("#ideaXml");
+                    }); // end of activityxml function
+                $('#ideaXml').listview('refresh');
+               // var data = $.parseXML()
+
                 //Start off with an empty list every time to get the latest from server
-                $('#ideaJson').empty();
+             /*  $('#ideaXml').empty();
 
                 //add the activity items as list
                 $.each(activities, function(i, activity){
-                    $('#ideaJson').append(generateActivityLink(activity));
+                    $('#ideaXml').append(generateActivityLink(activity));
                 });
 
                 //refresh the list view to show the latest changes
-                $('#ideaJson').listview('refresh');
+                $('#ideaXml').listview('refresh'); */
 
-            }
+            } //end of success function
 
-        });
+        }); //end of ajax
             console.log("AJAX");
-        }
-});
+
+}); //end of viewProjects
 
 //global ajax setting
 $.ajaxSetup({
@@ -186,7 +216,7 @@ $.ajaxSetup({
 
 });
 
-// JSON and YMAL loaded via AJAX
+// JSON loaded via AJAX
 $('#viewCompleted').on('pageinit', function(){
     console.log("viewCompleted page is Loaded");
         console.log("click Completed function");
@@ -342,7 +372,7 @@ $.each(localStorage, function(i){
     makeLink.html(makeSubLi);
     makeSubList.append(makeLink).appendTo("#formList");
 
-
+    $("#formList").listview('refresh');
 
     //Delete Function
     $('.deleteData').on('click', function(e){
@@ -389,7 +419,7 @@ $.each(localStorage, function(i){
     });
 
 });
-$("#formList").listview('refresh');
+
 
 
 }
