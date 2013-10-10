@@ -77,7 +77,7 @@ function storeData(key) {
 
     }else{
      //   $('#projectData')[0].reset();
-        window.location = '#viewIdeas';
+        window.location = '#viewProjects';
 
         return false;
     }
@@ -125,15 +125,21 @@ function storeData(key) {
 
 //Third page code for ID:viewProjects - viewIdeas - ViewCompleted
 $('#viewProjects').on('pageinit', function () {
-    if (localStorage.length === 0) {
-        alert("No Projects or Ideas have been saved");
 
-    }
 
     console.log("viewProjects page is Loaded");
     createList();
 
           });
+
+$('#viewProject').on('click', function(){
+    if (localStorage.length === 0) {
+        alert("No Projects or Ideas have been saved");
+    }else{
+        window.location="#viewProjects"
+    }
+});
+
 
 
 $('#viewIdeas').on('pageinit', function(){
@@ -149,9 +155,9 @@ $('#viewIdeas').on('pageinit', function(){
         $("#ideaJson").empty();
 
         $.ajax({
-            url: "xhr/activity.json",
+            url: "xhr/activity.xml",
             type: "GET",
-            dataType: "json",
+            dataType: "xml",
             success: function(activities, status){
                 console.log(status, activities);
                 //Start off with an empty list every time to get the latest from server
@@ -184,12 +190,12 @@ $.ajaxSetup({
 $('#viewCompleted').on('pageinit', function(){
     console.log("viewCompleted page is Loaded");
         console.log("click Completed function");
-        if (localStorage.length === 0) {
-            alert("There is no Data in Local Storage. YAML Test Data Being Loaded");
+            alert("JSON Data via ajax Loaded");
             //testData function utilizes activities.json file to populate the form with Data.
             //For testing purposes.
             //testData();
-            $.getJSON("xhr/activity.json", function(activities){
+            $.getJSON("xhr/activity.json", function(activities, status){
+                console.log(status, activities);
                 //Start off with an empty list every time to get the latest from server
                 $('#thinkTankList').empty();
 
@@ -202,7 +208,6 @@ $('#viewCompleted').on('pageinit', function(){
                 $('#thinkTankList').listview('refresh');
 
             });
-        }
 });
 
 //R for read code functionality
@@ -224,7 +229,7 @@ $('#viewCompleted').on('pageinit', function(){
 //creates a activity link list item
 function generateActivityLink(activity){
 
-    //debugger;
+    //create link to detail page
     return '<li><a href="javascript:void(0)'
         + '" onclick="goToActivityDetailPage(\''
         + activity.catType
@@ -234,14 +239,14 @@ function generateActivityLink(activity){
         + '</a></li>';
 }
 
-function goToActivityDetailPage(thinkTank,projectName,detailedNotes,intalize,globalize ){
+function goToActivityDetailPage(thinkTank,projectName,detailedNotes,initialize,globalize ){
 
     //create the page html template
     var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
         + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
         + projectName + "</li><li><br>"
         + detailedNotes + "</li><li><br>"
-        + intalize + "</li><li><br> "
+        + initialize + "</li><li><br> "
         + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editFn' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
     //append the new page to the page container
@@ -265,24 +270,78 @@ $.each(localStorage, function(i){
     var makeSubLi = $(
         "<h1>"+item.catType[1]+"</h1>"+
 
-        "<li>"+item.newID[1]+"</li>"+
+        "<li>"+item.newID[1]+"</li>");
 
-        "<li>"+item.newNote[1]+"</li>"+
+     /*   "<li>"+item.newNote[1]+"</li>"+
 
         "<li>"+item.startDate[1]+"</li>"+
 
         "<li>"+item.status[1]+"</li>"+
-        "<a href='#addProject' class='editData' data-role='' id='"+key+"'>Edit Data</a>"+
+        "<a href='#addProject' class='editData' data-role='' id='"+key+"'>Edit Data</a>");
         "<br>"+"<br>"+
         "<a href='#' data-icon='' data-role='' class='deleteData' id='"+key+"'>Delete Data</a>"+
-        "<br>"+"<br>");
+        "<br>"+"<br>");*/
 
     var makeLink = $("<a href='#' id='"+key+"'>Edit Data 123</a>");
+
     makeLink.on('click', function(){
         console.log("This is my key: "+this.id);
+        var newFormData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>"
+            + item.catType[1] + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>"
+            + item.newID[1] + "</li><li><br>"
+            + item.newNote[1] + "</li><li><br>"
+            + item.startDate[1] + "</li><li><br> "
+            + item.status[1] + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' id='"+key+"' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' id='"+key+"' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+
+        newFormData.appendTo($.mobile.pageContainer);
+
+        $.mobile.changePage(newFormData);
+
+        //Delete Function
+        $('.deleteData').on('click', function(e){
+            e.preventDefault();
+            var ask = confirm("Are you sure you want to delete Data?");
+            if(ask){
+                localStorage.removeItem(this.id);
+                alert("Data Deletion Process Complete!");
+                location.reload();
+            }else{
+                alert("Data Deletion Process Canceled.")
+            }
+        });
+        // End of Delete function
+
+        //Edit Function
+        $('.editData').on('click', function(){
+            // e.preventDefault();
+            console.log(this.id);
+            var key = (this.id);
+            console.log(key);
+            var value = localStorage.getItem(this.id);
+            console.log(value);
+            var item = JSON.parse(value);
+            console.log(item);
+            $('#categoryType').val(item.catType[1]);
+            $('#newProject').val(item.newID[1]);
+            $('#detailTxt').val(item.newNote[1]);
+            $('#startDate').val(item.startDate[1]);
+            $('[name="globalizationOptions"]').val(item.status[1]);
+
+            console.log(item.status[1]);
+
+            $('#submitDataForm').on('click', function(){
+
+                storeData(key);
+                location.reload();
+                console.log(key);
+                window.location = '#viewProjects';
+
+            });
+        });
     });
     makeLink.html(makeSubLi);
     makeSubList.append(makeLink).appendTo("#formList");
+
 
 
     //Delete Function
