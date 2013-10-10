@@ -31,14 +31,14 @@
         <!--ul data-role="listview" data-filter="true" data-autodividers="" data-inset="true" data-theme="" id="thinkTankList">
 
         </ul-->
-        <ul data-role="listview" data-theme="a" data-count-theme="c" data-inset="true">
+        <ul data-role="listview" data-theme="a" data-count-theme="" data-inset="true">
             <li data-icon="plus"><a href="#addProject" data-transition="fade">Add Project or Idea</a>
             </li>
-            <li><a href="#viewProjects" id="viewProject" data-transition="fade">View Projects<span class="ui-li-count">12</span></a>
+            <li><a href="#viewProjects" id="viewProject" data-transition="fade">View Projects</a>
             </li>
-            <li><a href="#viewIdeas" data-transition="fade">View Ideas<span class="ui-li-count">7</span></a>
+            <li><a href="#viewIdeas" data-transition="fade">View Ideas</a>
             </li>
-            <li><a href="#viewCompleted" data-transition="fade">View Completed<span class="ui-li-count">33</span></a>
+            <li><a href="#viewCompleted" data-transition="fade">View Completed</a>
             </li>
         </ul>
     </section>
@@ -157,7 +157,7 @@
         </nav>
     </header>
     <section data-role="content">
-        <ul data-role="listview" data-inset="true">
+        <ul data-role="listview" data-inset="true" id="ideaJson">
             <li data-role="list-divider">Friday, October 8, 2010 <span class="ui-li-count"></span></li>
             <li><a href="index.html">
                 <h2>Stephen Weber</h2>
@@ -223,14 +223,6 @@
         <ul data-role="listview" data-filter="true" data-autodividers="" data-inset="true" data-theme="" id="thinkTankList" >
 
         </ul>
-        <!--p>Completed Projects or Ideas Data will be listed by:</p>
-        <p>Category</p>
-        <p>Project or Idea</p>
-        <p>Notes</p>
-        <p>Start Date</p>
-        <p>Globalize</p>
-        <p><a href="#pageOne">Go to first page</a>
-        </p-->
     </section>
     <!--footer data-role="footer" data-position="fixed" style="overflow:hidden;">
         <nav data-role="navbar" data-position="fixed">
@@ -252,7 +244,7 @@
 <script type="text/javascript" src="js/libs/jquery.validate.js"></script>
 <script type="text/javascript" src="js/libs/additional-methods.js"></script>
 <!--overriding js files-->
-<script type="text/javascript" src="js/activity.json" ></script>
+<!--script type="text/javascript" src="js/activity.json" ></script-->
 <script type="text/javascript" src="js/asd-1310-jQuery.js"></script>
 </body>
 </html>
