@@ -171,7 +171,7 @@ $('#viewIdeas').on('pageinit', function () {
             $('#ideaXml').listview('refresh');
         } //end of success function
     }); //end of ajax
-    console.log("AJAX");
+    console.log("xml");
 
 }); //end of viewProjects
 
