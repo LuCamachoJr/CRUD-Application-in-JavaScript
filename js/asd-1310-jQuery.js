@@ -116,6 +116,7 @@ $('#viewProjects').on('pageinit', function () {
 
     console.log("viewProjects page is Loaded");
     createList();
+    $("#formList").listview('refresh');
 
 });
 
@@ -293,7 +294,7 @@ function createList() {
         makeLink.html(makeSubLi);
         makeSubList.append(makeLink).appendTo("#formList");
 
-        $("#formList").listview('refresh');
+
 
         //Delete Function
         $('.deleteData').on('click', function (e) {
