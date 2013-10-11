@@ -8,7 +8,7 @@
  * refactor functions using jquery
  */
 
-<<<<<<< HEAD
+
 function testData() {
 
     console.log(json);
@@ -83,13 +83,13 @@ $.ajaxSetup({
 });
 
 //First page code for ID:pageOne
->>>>>>> 22ef14fa3161d98b3cc2cc92b97741736f222798
+
 $('#pageOne').on('pageinit', function () {
     //code needed for home page goes here
     console.log("pageOne page is Loaded");
 });
 
-<<<<<<< HEAD
+
 $('#viewProject').on("click", function () {
     console.log("click Projects function");
     if (localStorage.length === 0) {
@@ -159,13 +159,13 @@ $('#addProject').on('pageinit', function () {
 
     var dForm = $('#projectData');
 
->>>>>>> 22ef14fa3161d98b3cc2cc92b97741736f222798
+
     dForm.validate({
         invalidHandler: function (form, validator) {},
         submitHandler: function () {
             dForm.serializeArray();
             storeData();
-<<<<<<< HEAD
+
             console.log(dForm.serializeArray());
             console.log(dForm);
         }
@@ -754,4 +754,4 @@ function createList() {
 
     });
 }
->>>>>>> 22ef14fa3161d98b3cc2cc92b97741736f222798
+
