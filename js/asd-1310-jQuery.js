@@ -53,7 +53,6 @@ $('#addProject').on('pageinit', function () {
             console.log(dForm.serializeArray());
             console.log(dForm);
         }
-
     });
 });
 
@@ -341,4 +340,5 @@ function createList() {
         });
 
     });
+    $("#formList").listview('refresh');
 }
