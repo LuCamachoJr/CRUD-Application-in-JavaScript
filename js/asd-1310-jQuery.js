@@ -136,7 +136,7 @@ $('#viewIdeas').on('pageinit', function () {
     alert("XML Data via ajax Loaded");
 
 
-    $("#ideaJson").empty();
+    $("#ideaXml").empty();
 
     $.ajax({
         url: "xhr/activity.xml",
