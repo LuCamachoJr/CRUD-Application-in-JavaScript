@@ -1,0 +1,92 @@
+/*
+ * Author: Luis Camacho Jr.
+ * Full Sail University
+ * Course: ASD
+ * Term: 1310
+ * Project Week 2
+ */
+
+.ui-header h2.ui-title {
+            font-size: 10px;
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 25px;
+    max-width: 300px;
+    
+}
+#pageOne img {
+    width: 40%;
+    max-width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+
+}
+div.ui-content  {
+                font-size: 12px;
+    text-align: center;
+}
+#pageOne {
+    text-align: center;
+    background: url("../style/images/backgroundMIUProject4.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+#pageOne .ui-listview {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 25px;
+    max-width: 240px;
+
+}
+#addProject .ui-content {
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 25px;
+    max-width: 300px;
+
+}
+#text-basic {
+color: #000000 ;
+}
+label.error {
+    color: red;
+}
+ul#clearList li {
+    list-style: none;
+    padding:14px;
+
+}
+#editItemSeparator {
+
+    background-color: #F3C824;
+    height: 5px;
+    width: 70%;
+
+}
+#dynamic {
+    width: 75%;
+    margin: 0 auto;
+    margin-top: 25px;
+    max-width: 100%;
+
+}
+#addProject img {
+                width: 70%;
+                max-width: 250px;
+                display: block;
+                margin-top: 10%;
+                margin-left: auto;
+                margin-right: auto;
+}
+#storage .ui-btn-inner {
+    display: hidden;
+}
+header h2 {
+    font-family: "chalkduster", cursive;
+
+}
+header h1 {
+    font-family: "chalkduster", cursive;
+}
+
