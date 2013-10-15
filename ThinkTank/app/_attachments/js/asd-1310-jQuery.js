@@ -110,19 +110,13 @@ function storeData(key) {
 
 
 
-//Third page code for ID:viewProjects - viewIdeas - ViewCompleted
+//Third page code for ID:viewProjects - viewIdeas - viewCompleted
 $('#viewProjects').on('pageinit', function () {
 
 
     console.log("viewProjects page is Loaded");
     createList();
-   // $("#formList").listview('refresh');
-    if ( $('#formList').hasClass('ui-listview')) {
-        $('#formList').listview('refresh');
-    }
-    else {
-        $('#formList').trigger('create');
-    }
+    $("#formList").listview('refresh');
 });
 
 $('#viewProject').on('click', function () {
@@ -135,7 +129,8 @@ $('#viewProject').on('click', function () {
 
 
 //xml loaded via AJAX
-$('#viewIdeas').on('pageinit', function () {
+//Disabled for rest of project
+/*$('#viewIdeas').on('pageinit', function () {
     console.log("viewIdeas page is Loaded");
     console.log("click Ideas function");
 
@@ -179,7 +174,7 @@ $('#viewIdeas').on('pageinit', function () {
     }); //end of ajax
     console.log("AJAX");
 
-}); //end of viewProjects
+});*/ //end of viewProjects
 
 
 // JSON loaded via AJAX
@@ -189,13 +184,14 @@ $('#viewCompleted').on('pageinit', function () {
     alert("JSON Data via ajax Loaded");
 
     //AJAX Shortcut Method
-    $.getJSON("activity.json", function (activities, status) {
+    $.getJSON("_view/project", function (activities, status) {
         console.log(status, activities);
         //Start off with an empty list every time to get the latest from server
         $('#thinkTankList').empty();
 
         //add the activity items as list
-        $.each(activities, function (i, activity) {
+        $.each(activities.rows, function (i, activity) {
+        console.log(activity);
             $('#thinkTankList').append(generateActivityLink(activity));
         });
 
@@ -210,7 +206,7 @@ $('#viewCompleted').on('pageinit', function () {
 function generateActivityLink(activity) {
 
     //create link to detail page
-    return '<li><a href="javascript:void(0)' + '" onclick="goToActivityDetailPage(\'' + activity.catType + '\',\'' + activity.newID + '\',\'' + activity.newNote + '\',\'' + activity.startDate + '\',\'' + activity.status + '\')">' + activity.newID + '</a></li>';
+    return '<li><a href="javascript:void(0)' + '" onclick="goToActivityDetailPage(\'' + activity.value.catType[1] + '\',\'' + activity.value.newID[1] + '\',\'' + activity.value.newNote[1] + '\',\'' + activity.value.startDate[1] + '\',\'' + activity.value.status[1] + '\')">' + activity.value.newID[1] + '</a></li>';
 }
 
 function goToActivityDetailPage(thinkTank, projectName, detailedNotes, initialize, globalize) {
@@ -346,5 +342,5 @@ function createList() {
         });
 
     });
-   // $("#formList:visible").listview('refresh');
+   $("#formList").listview('refresh');
 }
