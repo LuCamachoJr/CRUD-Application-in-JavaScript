@@ -75,8 +75,8 @@ function storeData(key) {
 
     // window.location.reload();
 
-    window.location = '#viewProjects';
-    createList();
+        window.location = '#viewProjects';
+        createList();
 
 
     $('#projectData')[0].reset();
@@ -116,6 +116,7 @@ $('#viewProjects').on('pageinit', function () {
     console.log("viewProjects page is Loaded");
     createList();
     $("#formList").listview('refresh');
+
 });
 
 $('#viewProject').on('click', function () {
@@ -135,7 +136,7 @@ $('#viewIdeas').on('pageinit', function () {
     alert("XML Data via ajax Loaded");
 
 
-    $("#ideaJson").empty();
+    $("#ideaXml").empty();
 
     $.ajax({
         url: "xhr/activity.xml",
@@ -170,7 +171,7 @@ $('#viewIdeas').on('pageinit', function () {
             $('#ideaXml').listview('refresh');
         } //end of success function
     }); //end of ajax
-    console.log("ajax-xml");
+    console.log("AJAX");
 
 }); //end of viewProjects
 
@@ -196,7 +197,6 @@ $('#viewCompleted').on('pageinit', function () {
         $('#thinkTankList').listview('refresh');
 
     });
-    console.log("ajax-JSON");
 });
 
 //creates a activity link list item
