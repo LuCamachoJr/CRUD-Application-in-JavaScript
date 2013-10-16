@@ -3,7 +3,7 @@
  * Full Sail University
  * Course: ASD
  * Term: 1310
- * Project Week 2
+ * Project Week 4
  * Reference js from previous courses
  * refactor functions using jquery
  */
@@ -57,7 +57,7 @@ $('#addProject').on('pageinit', function () {
     });
 });
 
-function storeData(key) {
+function storeData() {
 
     if (!key) {
         var id = Math.floor(Math.random() * 100001);
@@ -65,19 +65,22 @@ function storeData(key) {
         id = key;
     }
     var formItems = {};
+    //formItems._id = $(':selected').val()+":"+$("#newProject").val();
     formItems.catType = ["Choose A Category Type:", $(':selected').val()];
     formItems.newID = ["Enter New Project or Idea:", $("#newProject").val()];
     formItems.newNote = ["Enter Note on Project or Idea:", $("#detailTxt").val()];
     formItems.startDate = ["Enter Start Date:", $("#startDate").val()];
     formItems.status = ["Globalize:", $('[name="globalizationOptions"]:checked').val()];
-    localStorage.setItem(id, JSON.stringify(formItems));
+    $.couch.db("asdi").saveDoc(formItems, {
+    success: function(data){
+    console.log(data);
     console.log(formItems);
-    alert("Saving " + formItems.catType[1] + " " + id + "! Select Display Data Link Above To View Or Edit Data!");
+    alert("Saving " + formItems.catType[1] + " " + + "! Select Display Data Link Above To View Or Edit Data!");
 
     // window.location.reload();
-
-        window.location = '#viewProjects';
-        createList();
+        dynamicData();
+        window.location = '#viewCompleted';
+       // createList();
 
 
     $('#projectData')[0].reset();
@@ -107,8 +110,8 @@ function storeData(key) {
      //  window.location = "#";
      });*/
 }
-
-
+});
+}
 
 //Third page code for ID:viewProjects - viewIdeas - viewCompleted
 $('#viewProjects').on('pageinit', function () {
@@ -126,6 +129,7 @@ $('#viewProject').on('click', function () {
         window.location = "#viewProjects"
     }
 });
+
 
 
 //xml loaded via AJAX
@@ -181,38 +185,45 @@ $('#viewProject').on('click', function () {
 $('#viewCompleted').on('pageinit', function () {
     console.log("viewCompleted page is Loaded");
     console.log("click Completed function");
-    alert("JSON Data via ajax Loaded");
+    alert("JSON Data via CouchDB AJAX call Loaded");
+    dynamicData();
+});
 
-    //AJAX Shortcut Method
-    $.getJSON("_view/project", function (activities, status) {
-        console.log(status, activities);
+function dynamicData(){
+
+//CouchDB AJAX call
+//AJAX Shortcut Method
+//$.getJSON("_view/project", function (activities, status) {
+$.couch.db("asdi").view("app/project",{
+    success: function(activities) {
+        console.log(activities);
         //Start off with an empty list every time to get the latest from server
         $('#thinkTankList').empty();
 
         //add the activity items as list
         $.each(activities.rows, function (i, activity) {
-        console.log(activity);
+            console.log(activity);
+
             $('#thinkTankList').append(generateActivityLink(activity));
         });
 
         //refresh the list view to show the latest changes
         $('#thinkTankList').listview('refresh');
-
-    });
+    }
 });
-
+}
 //creates a activity link list item
 
 function generateActivityLink(activity) {
 
     //create link to detail page
-    return '<li><a href="javascript:void(0)' + '" onclick="goToActivityDetailPage(\'' + activity.value.catType[1] + '\',\'' + activity.value.newID[1] + '\',\'' + activity.value.newNote[1] + '\',\'' + activity.value.startDate[1] + '\',\'' + activity.value.status[1] + '\')">' + activity.value.newID[1] + '</a></li>';
+    return '<li><a href="javascript:void(0)' + '" onclick="goToActivityDetailPage(\'' + activity.value._id + '\',\'' + activity.value._rev + '\',\'' + activity.value.catType[1] + '\',\'' + activity.value.newID[1] + '\',\'' + activity.value.newNote[1] + '\',\'' + activity.value.startDate[1] + '\',\'' + activity.value.status[1] + '\')">' + activity.value.newID[1] + '</a></li>';
 }
 
-function goToActivityDetailPage(thinkTank, projectName, detailedNotes, initialize, globalize) {
+function goToActivityDetailPage(thinkTankId,thinkTankRev,thinkTank, projectName, detailedNotes, initialize, globalize) {
 
     //create the page html template
-    var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + projectName + "</li><li><br>" + detailedNotes + "</li><li><br>" + initialize + "</li><li><br> " + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editFn' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-icon='delete'>Delete</a></ul></nav></footer></section>");
+    var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + projectName + "</li><li><br>" + detailedNotes + "</li><li><br>" + initialize + "</li><li><br> " + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editFn' data-id="+thinkTankId+" data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-rev="+thinkTankRev+" data-id="+thinkTankId+" data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
     //append the new page to the page container
     activityPage.appendTo($.mobile.pageContainer);
@@ -221,10 +232,67 @@ function goToActivityDetailPage(thinkTank, projectName, detailedNotes, initializ
     $.mobile.changePage(activityPage);
 
     $('.editFn').on('click', function(){
-        alert("JSON data static edit function disabled");
+        var activityEdit = thinkTankId;
+
+        alert("Edit data");
+
+           // e.preventDefault();
+            console.log(activityEdit);
+        $.couch.db("asdi").openDoc(activityEdit, {
+            success: function(data){
+                console.log(data);
+                $('#categoryType').val(data.catType[1]);
+                $('#newProject').val(data.newID[1]);
+                $('#detailTxt').val(data.newNote[1]);
+                $('#startDate').val(data.startDate[1]);
+                $('[name="globalizationOptions"]').val(data.status[1]);
+                console.log(data.status[1]);
+
+                $('#submitDataForm').on('click', function () {
+
+                    storeData();
+                    location.reload();
+                    console.log(data);
+                    window.location = '#viewCompleted';
+                });
+            },
+            error: function(status) {
+                console.log(status);
+            }
+
+           // var key = (this.id);
+            //console.log(key);
+            //var value = localStorage.getItem(this.id);
+            //console.log(value);
+            //var item = JSON.parse(value);
+            //console.log(item);
     });
-    $('.deleteFn').on('click', function(){
-        alert("JSON data static delete function disabled");
+});
+
+
+    $('.deleteFn').on('click', function(e){
+        var activityDel ={};
+        activityDel._id = thinkTankId;
+        activityDel._rev = thinkTankRev;
+        e.preventDefault();
+        var ask = confirm("Are you sure you want to delete Data?");
+        if (ask) {
+            $.couch.db("asdi").removeDoc(activityDel,{
+                success: function(data){
+            console.log(data);
+                    //$('#thinkTankList').empty();
+            alert("Data Deletion Process Complete!");
+                    dynamicData();
+                    window.location = "#viewCompleted";
+                   //
+                },
+                error: function(status) {
+                    console.log(status);
+                }
+            });
+        } else {
+            alert("Data Deletion Process Canceled.")
+        }
     });
 }
 
@@ -331,9 +399,9 @@ function createList() {
 
             $('#submitDataForm').on('click', function () {
 
-                storeData(key);
+                storeData();
                 location.reload();
-                console.log(key);
+                console.log();
                 window.location = '#viewProjects';
 
             });
