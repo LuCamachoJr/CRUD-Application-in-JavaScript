@@ -8,6 +8,7 @@
  * refactor functions using jquery
  */
 
+
 //global ajax setting
 $.ajaxSetup({
     error: function (err) {
@@ -31,21 +32,34 @@ $('#addProject').on('pageinit', function () {
     $('.ui-block-b').on("click", function () {
         $('#projectData')[0].reset();
     });
-
+    //CouchDb plugin .info creates object which I used dor data counter
     $('#storage').on("click", function () {
-        if (localStorage.length === 0) {
-            alert("No Projects or Ideas have been saved");
-        } else {
-            window.location = "#viewProjects"
-        }
+        $.couch.db("asdi").info({
+            success: function (data) {
+                console.log(data);
+                if (data.doc_count === 0) {
+                    console.log(data.doc_count);
+                    alert("No Projects or Ideas have been saved");
+                } else {
+                    alert("Activities saved in Database: " + data.doc_count + " ");
+                    //window.location = "#viewCompleted"
+                    console.log(data.doc_count);
+                }
+            }
+        });
     });
 
     console.log("addProject page is loaded");
+    validateSubmit();
+});
 
+function validateSubmit() {
+    ///MAKE FUNCTION FOR VALIDATOR AND SUBMIT HANDLER FOR NEW & EDITFN TO SOLVE CONFLICT OF SUBMIT HANDLER
     var dForm = $('#projectData');
 
     dForm.validate({
         invalidHandler: function (form, validator) {},
+
         submitHandler: function () {
             dForm.serializeArray();
             storeData();
@@ -55,15 +69,9 @@ $('#addProject').on('pageinit', function () {
         }
 
     });
-});
+}
 
 function storeData() {
-
-    if (!key) {
-        var id = Math.floor(Math.random() * 100001);
-    } else {
-        id = key;
-    }
     var formItems = {};
     //formItems._id = $(':selected').val()+":"+$("#newProject").val();
     formItems.catType = ["Choose A Category Type:", $(':selected').val()];
@@ -72,45 +80,18 @@ function storeData() {
     formItems.startDate = ["Enter Start Date:", $("#startDate").val()];
     formItems.status = ["Globalize:", $('[name="globalizationOptions"]:checked').val()];
     $.couch.db("asdi").saveDoc(formItems, {
-    success: function(data){
-    console.log(data);
-    console.log(formItems);
-    alert("Saving " + formItems.catType[1] + " " + + "! Select Display Data Link Above To View Or Edit Data!");
+        success: function (data) {
+            console.log(data);
+            console.log(formItems);
+            alert("Saving " + formItems.catType[1] + " " + formItems.newID[1] + "! Select Display Data Link Above To View Or Edit Data!");
 
-    // window.location.reload();
-        dynamicData();
-        window.location = '#viewCompleted';
-       // createList();
+            // window.location.reload();
+            dynamicData();
+            window.location = '#viewCompleted';
+            $('#projectData')[0].reset();
 
-
-    $('#projectData')[0].reset();
-    // Working on adding effects to Logo
-    /*       $('#projectData').fadeOut();
-     $('#logoAnimation').delay(800).fadeIn('slow').fadeOut(1000).fadeIn(1000).fadeOut(1000).fadeIn(1000);
-
-     $.fn.slideFadeToggle  = function(speed, easing, callback) {
-     return this.animate({opacity: 'toggle', height: 'toggle'}, speed, easing, callback);
-     };
-     $("#logoAnimation").click(function() {
-     if(formItems.catType[1]==="Project"){
-     $(this).slideFadeToggle();
-     $('#projectData').fadeIn();
-     window.location = '#viewProjects';
-     createList();
-     }else{
-     $(this).slideFadeToggle();
-     $('#projectData').fadeIn();
-     window.location = '#viewIdeas'
-     createList();
-     return false;
-     }
-     $('#projectData').fadeIn();
-
-
-     //  window.location = "#";
-     });*/
-}
-});
+        }
+    });
 }
 
 //Third page code for ID:viewProjects - viewIdeas - viewCompleted
@@ -118,175 +99,221 @@ $('#viewProjects').on('pageinit', function () {
 
 
     console.log("viewProjects page is Loaded");
-    createList();
-    $("#formList").listview('refresh');
 });
 
 $('#viewProject').on('click', function () {
-    if (localStorage.length === 0) {
-        alert("No Projects or Ideas have been saved");
-    } else {
-        window.location = "#viewProjects"
-    }
+
+
+    $.couch.db("asdi").info({
+        success: function (data) {
+            console.log(data);
+            if (data.doc_count === 0) {
+                console.log(data.doc_count);
+                alert("No Projects or Ideas have been saved");
+            } else {
+                window.location = "#viewProjects"
+                console.log(data.doc_count);
+            }
+        }
+    });
 });
 
-
-
-//xml loaded via AJAX
-//Disabled for rest of project
-/*$('#viewIdeas').on('pageinit', function () {
-    console.log("viewIdeas page is Loaded");
-    console.log("click Ideas function");
-
-    alert("XML Data via ajax Loaded");
-
-
-    $("#ideaXml").empty();
-
-    $.ajax({
-        url: "activity.xml",
-        type: "GET",
-        dataType: "xml",
-        success: function (activityxml, status) {
-            console.log(status, activityxml);
-            $("#ideaXml").empty();
-            $(activityxml).find("Activity").each(function () {
-                var item = $(this);
-                var makeSubList = $("<li data-theme='a' data-role=''></li>");
-                var makeSubLi = $("<li>" + item.find('newID').text() + "</li>");
-                var makeLink = $("<a href='#'></a>");
-
-                makeLink.on('click', function () {
-                    console.log("Dynamically creating page container for xml details");
-                    var newIdeaData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + item.find('catType').text() + "</h1><a href='#viewIdeas' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + item.find('newID').text() + "</li><li><br>" + item.find('newNote').text() + "</li><li><br>" + item.find('startDate').text() + "</li><li><br> " + item.find('status').text() + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#' class='editData' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' data-icon='delete'>Delete</a></ul></nav></footer></section>");
-
-                    newIdeaData.appendTo($.mobile.pageContainer);
-
-                    $.mobile.changePage(newIdeaData);
-                    $('.editData').on('click', function(){
-                        alert("xml data static edit function disabled");
-                    });
-                    $('.deleteData').on('click', function(){
-                        alert("xml data static delete function disabled");
-                    });
-                });
-                makeLink.html(makeSubLi);
-                makeSubList.append(makeLink).appendTo("#ideaXml");
-            }); // end of activityxml function
-            $('#ideaXml').listview('refresh');
-        } //end of success function
-    }); //end of ajax
-    console.log("AJAX");
-
-});*/ //end of viewProjects
-
-
-// JSON loaded via AJAX
+// JSON loaded via CouchDB Plugin
 $('#viewCompleted').on('pageinit', function () {
-    console.log("viewCompleted page is Loaded");
+    console.log("viewActivities page is Loaded");
     console.log("click Completed function");
-    alert("JSON Data via CouchDB AJAX call Loaded");
+    alert("CouchDB call loading JSON Data");
     dynamicData();
+    $('#dataCounter').on("click", function () {
+        $.couch.db("asdi").info({
+            success: function (data) {
+                console.log(data);
+                if (data.doc_count === 0) {
+                    console.log(data.doc_count);
+                    alert("No Projects or Ideas have been saved");
+                } else {
+                    alert("Activities saved in Database: " + data.doc_count + " ");
+                    // window.location = "#viewCompleted"
+                    console.log(data.doc_count);
+                }
+            }
+        });
+    });
 });
 
-function dynamicData(){
+//Dynamically Creates new links and detail page when new CouchDB document is created
+function dynamicData() {
+    $.couch.db("asdi").view("app/project", {
+        success: function (activities) {
+            console.log(activities);
+            //Start off with an empty list every time to get the latest from server
+            $('#thinkTankList').empty();
 
-//CouchDB AJAX call
-//AJAX Shortcut Method
-//$.getJSON("_view/project", function (activities, status) {
-$.couch.db("asdi").view("app/project",{
-    success: function(activities) {
-        console.log(activities);
-        //Start off with an empty list every time to get the latest from server
-        $('#thinkTankList').empty();
+            //add the activity items as list
+            $.each(activities.rows, function (i, activity) {
+                console.log(activity);
 
-        //add the activity items as list
-        $.each(activities.rows, function (i, activity) {
-            console.log(activity);
+                $('#thinkTankList').append(generateActivityLink(activity));
+            });
 
-            $('#thinkTankList').append(generateActivityLink(activity));
+            //refresh the list view to show the latest changes
+            $('#thinkTankList').listview('refresh');
+        }
+    });
+}
+
+// CouchDB plugin Bulk Remove to Delete Entire Database Function
+$('#deleteAll').on('click', function (e) {
+    e.preventDefault();
+    $.each(activities.rows, function (i, activity) {
+        console.log(activity);
+        var deleteBulk = {};
+        deleteBulk._id = activity.value._id;
+        deleteBulk._rev = activity.value._rev;
+        console.log(deleteBulk);
+    });
+    var ask = confirm("WARNING ARE YOU SURE YOU WANT TO DELETE ENTIRE DATABASE");
+    if (ask) {
+        $.couch.db("asdi").bulkRemove({
+            "docs": deleteBulk
+        }, {
+            success: function (data) {
+                console.log(data);
+
+                alert("Entire Database Deletion Process Complete!");
+                // dynamicData();
+                window.location = "#pageOne";
+
+            },
+            error: function (status) {
+                console.log(status);
+            }
         });
-
-        //refresh the list view to show the latest changes
-        $('#thinkTankList').listview('refresh');
+    } else {
+        alert("Database Deletion Process Canceled.")
     }
 });
-}
-//creates a activity link list item
 
+//creates a activity link list item
 function generateActivityLink(activity) {
 
     //create link to detail page
     return '<li><a href="javascript:void(0)' + '" onclick="goToActivityDetailPage(\'' + activity.value._id + '\',\'' + activity.value._rev + '\',\'' + activity.value.catType[1] + '\',\'' + activity.value.newID[1] + '\',\'' + activity.value.newNote[1] + '\',\'' + activity.value.startDate[1] + '\',\'' + activity.value.status[1] + '\')">' + activity.value.newID[1] + '</a></li>';
 }
 
-function goToActivityDetailPage(thinkTankId,thinkTankRev,thinkTank, projectName, detailedNotes, initialize, globalize) {
+function goToActivityDetailPage(thinkTankId, thinkTankRev, thinkTank, projectName, detailedNotes, initialize, globalize) {
 
     //create the page html template
-    var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + projectName + "</li><li><br>" + detailedNotes + "</li><li><br>" + initialize + "</li><li><br> " + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editFn' data-id="+thinkTankId+" data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-rev="+thinkTankRev+" data-id="+thinkTankId+" data-icon='delete'>Delete</a></ul></nav></footer></section>");
+    var activityPage = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + thinkTank + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + projectName + "</li><li><br>" + detailedNotes + "</li><li><br>" + initialize + "</li><li><br> " + globalize + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProjectB' class='editFn' data-id=" + thinkTankId + " data-icon='edit'>Edit</a></li><li><a href='#' class='deleteFn' data-rev=" + thinkTankRev + " data-id=" + thinkTankId + " data-icon='delete'>Delete</a></ul></nav></footer></section>");
 
     //append the new page to the page container
     activityPage.appendTo($.mobile.pageContainer);
 
     //go to the newly created page
     $.mobile.changePage(activityPage);
+    // Edit Function attaches _id & rev to edit button dynamically to page detail's edit button in Nav bar
+    $('.editFn').on('click', function () {
 
-    $('.editFn').on('click', function(){
         var activityEdit = thinkTankId;
 
         alert("Edit data");
 
-           // e.preventDefault();
-            console.log(activityEdit);
+        console.log(activityEdit);
         $.couch.db("asdi").openDoc(activityEdit, {
-            success: function(data){
+            success: function (data) {
                 console.log(data);
-                $('#categoryType').val(data.catType[1]);
-                $('#newProject').val(data.newID[1]);
-                $('#detailTxt').val(data.newNote[1]);
-                $('#startDate').val(data.startDate[1]);
-                $('[name="globalizationOptions"]').val(data.status[1]);
+                $('#categoryTypeB').val(data.catType[1]).change();
+                $('#newProjectB').val(data.newID[1]);
+                $('#detailTxtB').val(data.newNote[1]);
+                $('#startDateB').val(data.startDate[1]);
+                var rb = $('input:radio[name=globalizationOptionsB]');
+                //  $(rb).checkboxradio("clear");
+                for (var a = 0; a < rb.length; a++) {
+
+                    if (rb[a].value == "Post to Twitter" && data.status[1] == "Post to Twitter") {
+                        //  rb[a].val("checked", true);
+                        //Set JQM radio based on value & val
+                        $(rb[a]).prop('checked', true).checkboxradio("refresh");
+                        //Un-check JQM radio based on value & val
+                        $('input:radio#pvtChoiceB').prop('checked', false).checkboxradio("refresh")
+                        console.log(rb[a]);
+                    } else if (rb[a].value == "Keep it Private" && data.status[1] == "Keep it Private") {
+                        //Set JQM radio based on value & val
+                        $(rb[a]).prop('checked', true).checkboxradio("refresh");
+                        //Un-check JQM radio based on value & val
+                        $('input:radio#ProjectTwitterB').prop('checked', false).checkboxradio("refresh");
+                        //  $('label[for="pvtChoiceB"]').attr('data-icon', 'radio-on');
+                        console.log(rb[a]);
+
+                    }
+                }
+                // JQM radio checked status
+                console.log($('input:radio[name=globalizationOptionsB]').prop("checked"));
+                console.log(rb);
+                // rb.filter(data.status[1]).attr('checked', true);
                 console.log(data.status[1]);
 
-                $('#submitDataForm').on('click', function () {
-
-                    storeData();
-                    location.reload();
-                    console.log(data);
-                    window.location = '#viewCompleted';
-                });
             },
-            error: function(status) {
+            error: function (status) {
                 console.log(status);
             }
+        });
+        var dForm = $('#projectDataB');
 
-           // var key = (this.id);
-            //console.log(key);
-            //var value = localStorage.getItem(this.id);
-            //console.log(value);
-            //var item = JSON.parse(value);
-            //console.log(item);
+        dForm.validate({
+            invalidHandler: function (form, validator) {},
+
+            submitHandler: function () {
+                var activitySaveUpdated = {};
+                activitySaveUpdated._id = thinkTankId;
+                activitySaveUpdated._rev = thinkTankRev;
+                //formItems._id = $(':selected').val()+":"+$("#newProject").val();
+                activitySaveUpdated.catType = ["Choose A Category Type:", $('#categoryTypeB').val()];
+                activitySaveUpdated.newID = ["Enter New Project or Idea:", $("#newProjectB").val()];
+                activitySaveUpdated.newNote = ["Enter Note on Project or Idea:", $("#detailTxtB").val()];
+                activitySaveUpdated.startDate = ["Enter Start Date:", $("#startDateB").val()];
+                activitySaveUpdated.status = ["Globalize:", $('[name="globalizationOptionsB"]:checked').val()];
+                $.couch.db("asdi").saveDoc(activitySaveUpdated, {
+                    success: function (data) {
+                        console.log(data);
+                        console.log(activitySaveUpdated.catType);
+                        //storeData();
+                        //  location.reload();
+                        console.log(data);
+                        dynamicData();
+                        window.location = '#viewCompleted';
+                        $('#projectDataB')[0].reset();
+                    },
+                    error: function (status) {
+                        console.log(status);
+                        console.log("Response Text: conflict, reason: Document update conflict.");
+                        console.log("Used CouchDB plugin Save Updated Document call, refresh page, researching CouchDB documentation");
+                    }
+                });
+            }
+
+        });
+
     });
-});
 
-
-    $('.deleteFn').on('click', function(e){
-        var activityDel ={};
+    // Delete Function attaches _id & rev to delete button dynamically to page detail's delete button in Nav bar
+    $('.deleteFn').on('click', function (e) {
+        var activityDel = {};
         activityDel._id = thinkTankId;
         activityDel._rev = thinkTankRev;
         e.preventDefault();
         var ask = confirm("Are you sure you want to delete Data?");
         if (ask) {
-            $.couch.db("asdi").removeDoc(activityDel,{
-                success: function(data){
-            console.log(data);
+            $.couch.db("asdi").removeDoc(activityDel, {
+                success: function (data) {
+                    console.log(data);
                     //$('#thinkTankList').empty();
-            alert("Data Deletion Process Complete!");
+                    alert("Data Deletion Process Complete!");
                     dynamicData();
                     window.location = "#viewCompleted";
-                   //
+                    //
                 },
-                error: function(status) {
+                error: function (status) {
                     console.log(status);
                 }
             });
@@ -294,121 +321,4 @@ function goToActivityDetailPage(thinkTankId,thinkTankRev,thinkTank, projectName,
             alert("Data Deletion Process Canceled.")
         }
     });
-}
-
-
-function createList() {
-    $("#formList").empty();
-    $.each(localStorage, function (i) {
-        var key = localStorage.key(i);
-        var item = JSON.parse(localStorage.getItem(key));
-        console.log(item);
-        console.log(key);
-
-        var makeSubList = $("<li data-theme='a' data-role=''" + item.startDate[1] + " ID " + key + "></li>");
-        var makeSubLi = $(
-            "<h1>" + item.catType[1] + "</h1>" +
-                "<li>" + item.newID[1] + "</li>");
-        var makeLink = $("<a href='#' id='" + key + "'>Edit Data 123</a>");
-        makeLink.on('click', function () {
-            console.log("This is my key: " + this.id);
-            var newFormData = $("<section data-role='page' data-url=CRUD><header data-role='header' data-theme='d'><h1>" + item.catType[1] + "</h1><a href='#viewCompleted' data-icon='back' data-iconpos='notext' data-direction='reverse' class='ui-btn-left'>back</a></header><section data-role='content'><ul  data-role='listview' data-theme='d' id='listJson'><li><br>" + item.newID[1] + "</li><li><br>" + item.newNote[1] + "</li><li><br>" + item.startDate[1] + "</li><li><br> " + item.status[1] + "</li></ul></section><footer data-role='footer' data-theme='b' data-position='fixed' style='overflow:hidden;'><nav data-role='navbar' data-position='fixed' data-iconpos='bottom'><ul><li><a href='#addProject' class='' data-icon='plus'>Add New</a></li><li><a href='#addProject' class='editData' id='" + key + "' data-icon='edit'>Edit</a></li><li><a href='#' class='deleteData' id='" + key + "' data-icon='delete'>Delete</a></ul></nav></footer></section>");
-
-            newFormData.appendTo($.mobile.pageContainer);
-
-            $.mobile.changePage(newFormData);
-
-            //Delete Function
-            $('.deleteData').on('click', function (e) {
-                e.preventDefault();
-                var ask = confirm("Are you sure you want to delete Data?");
-                if (ask) {
-                    localStorage.removeItem(this.id);
-                    alert("Data Deletion Process Complete!");
-                    location.reload();
-                } else {
-                    alert("Data Deletion Process Canceled.")
-                }
-            });
-            // End of Delete function
-
-            //Edit Function
-            $('.editData').on('click', function () {
-                // e.preventDefault();
-                console.log(this.id);
-                var key = (this.id);
-                console.log(key);
-                var value = localStorage.getItem(this.id);
-                console.log(value);
-                var item = JSON.parse(value);
-                console.log(item);
-                $('#categoryType').val(item.catType[1]);
-                $('#newProject').val(item.newID[1]);
-                $('#detailTxt').val(item.newNote[1]);
-                $('#startDate').val(item.startDate[1]);
-                $('[name="globalizationOptions"]').val(item.status[1]);
-
-                console.log(item.status[1]);
-
-                $('#submitDataForm').on('click', function () {
-
-                    storeData(key);
-                    location.reload();
-                    console.log(key);
-                    window.location = '#viewProjects';
-
-                });
-            });
-        });
-        makeLink.html(makeSubLi);
-        makeSubList.append(makeLink).appendTo("#formList");
-
-
-
-        //Delete Function
-        $('.deleteData').on('click', function (e) {
-            e.preventDefault();
-            var ask = confirm("Are you sure you want to delete Data?");
-            if (ask) {
-                localStorage.removeItem(this.id);
-                alert("Data Deletion Process Complete!");
-                location.reload();
-            } else {
-                alert("Data Deletion Process Canceled.")
-            }
-        });
-        // End of Delete function
-
-        //Edit Function
-        $('.editData').on('click', function () {
-            // e.preventDefault();
-            console.log(this.id);
-            var key = (this.id);
-            console.log(key);
-            var value = localStorage.getItem(this.id);
-            console.log(value);
-            var item = JSON.parse(value);
-            console.log(item);
-            $('#categoryType').val(item.catType[1]);
-            $('#newProject').val(item.newID[1]);
-            $('#detailTxt').val(item.newNote[1]);
-            $('#startDate').val(item.startDate[1]);
-            $('[name="globalizationOptions"]').val(item.status[1]);
-
-            console.log(item.status[1]);
-
-            $('#submitDataForm').on('click', function () {
-
-                storeData();
-                location.reload();
-                console.log();
-                window.location = '#viewProjects';
-
-            });
-
-
-        });
-
-    });
-   $("#formList").listview('refresh');
 }

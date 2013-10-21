@@ -31,23 +31,19 @@
         <ul data-role="listview" data-theme="a" data-count-theme="" data-inset="true">
             <li data-icon="plus"><a href="#addProject" data-transition="fade">Add Project or Idea</a>
             </li>
-            <li><a href="#" id="viewProject" data-transition="fade">View Projects</a>
-            </li>
-            <!--li><a href="#viewIdeas" data-transition="fade">Load XML via  ajax</a>
-            </li-->
-            <li><a href="#viewCompleted" data-transition="fade">Load JSON via ajax</a>
+            <li><a href="#viewCompleted" data-transition="fade">View Activities</a>
             </li>
         </ul>
     </section>
 </section>
 
-<!-- Form Add Page -->
+<!-- Form Add Page A -->
 <section id="addProject" data-role="page" data-theme="b" data-title="ThinkTank Form">
     <header data-role="header" data-position="fixed" data-theme="a">
         <h1>ThinkTank</h1>
         <h2>Social Collaboration on a Global Scale</h2>
         <a href="#pageOne" data-transition="" data-direction="reverse" data-icon="home" data-iconpos="notext">Home</a>
-        <a href="#" id="storage" data-transition="fade" data-icon="gear" data-iconpos="notext">View Saved data</a>
+        <a href="#" id="storage" data-transition="fade" data-icon="gear" data-iconpos="notext">Database Counter</a>
     </header>
     <section data-role="content">
         <section id="logoAnimation" hidden="hidden">
@@ -69,7 +65,7 @@
             <section data-role="fieldcontain" class="ui-hide-label">
 
                 <label for="detailTxt">Notes:</label>
-                <textarea cols="40" rows="8" name="Notes" id="detailTxt" placeholder="Enter Note on Project or Idea" class=""  data-theme="b"></textarea>
+                <textarea cols="40" rows="8" name="Notes" id="detailTxt" placeholder="Enter Note on Project or Idea" class="required"  data-theme="b"></textarea>
 
             </section>
             <section data-role="fieldcontain" class="ui-hide-label">
@@ -99,77 +95,81 @@
     </section>
 </section>
 
-<!-- Projects Page -->
-<section id="viewProjects" data-role="page" data-theme="d" data-title="ThinkTank Projects">
-    <header data-role="header" data-position="fixed"  data-theme="a" data-id="tt_header">
+<!-- Form Add Page B -->
+<section id="addProjectB" data-role="page" data-theme="b" data-title="ThinkTank Form">
+    <header data-role="header" data-position="fixed" data-theme="a">
         <h1>ThinkTank</h1>
         <h2>Social Collaboration on a Global Scale</h2>
-        <a href="#pageOne" data-direction="reverse" data-icon="home">Home</a>
-        <a href="#addProject" id="clearStored" data-transition="fade" data-icon="plus">Add Data</a>
-        <nav data-role="navbar">
-            <ul>
-                <li><a href="#" id="vProjects" data-transition="fade" class="ui-btn-active ui-state-persist">Projects</a>
-                </li>
-                <!--li><a href="#viewIdeas" data-transition="fade">Load XML via ajax</a>
-                </li-->
-                <li><a href="#viewCompleted" data-transition="fade">Load JSON via ajax</a>
-                </li>
-            </ul>
-        </nav>
+        <a href="#pageOne" data-transition="" data-direction="reverse" data-icon="home" data-iconpos="notext">Home</a>
+        <!--a href="#" id="storageB" data-transition="fade" data-icon="gear" data-iconpos="notext">View Saved data</a-->
+        <a href='#viewCompleted' data-icon='forward' data-iconpos='notext' data-direction='reverse' class='ui-btn-right'>Activities</a>
     </header>
-    <section data-role="content" id="dynamic" data-theme="">
-        <ul data-role="listview" data-filter="true" data-autodividers="" data-inset="true" data-theme="" id="formList">
-            <!--li><a href="#">Add a List-Item</a></li-->
-        </ul>
+    <section data-role="content">
+        <section id="logoAnimationB" hidden="hidden">
+            <img src="ThinkTankResize.png" alt="View Source Logo" class="logo"/>
+        </section>
+        <form action="#"  id="projectDataB" data-theme="">
+            <section data-role="fieldcontain" class="ui-hide-label">
+                <label for="categoryTypeB" class="select">Categories:</label>
+                <label for="categoryTypeB"></label><select name="Categories" id="categoryTypeB" data-native-menu="false" data-theme="b" autofocus class="required">
+                    <option value="">Choose A Category Type:</option>
+                    <option value="Project">Project</option>
+                    <option value="Idea">Idea</option>
+                </select>
+            </section>
+            <section data-role="fieldcontain" class="ui-hide-label">
+                <label for="newProject">Project or Ideas:</label>
+                <input type="text" name="Project or Ideas" id="newProjectB" value="" placeholder="Enter New Project or Idea" class="required" data-theme="b"/>
+            </section>
+            <section data-role="fieldcontain" class="ui-hide-label">
+
+                <label for="detailTxt">Notes:</label>
+                <textarea cols="40" rows="8" name="Notes" id="detailTxtB" placeholder="Enter Note on Project or Idea" class="required"  data-theme="b"></textarea>
+
+            </section>
+            <section data-role="fieldcontain" class="ui-hide-label">
+                <label for="startDateB">Enter Start Date:</label>
+                <label for="startDateB"></label><input type="date" name="Start Date" id="startDateB" value="" class="required date" data-theme="b"/>
+            </section>
+            <section data-role="fieldcontain" class="ui-hide-label">
+                <section data-role="controlgroup">
+                    <input type="radio" name="globalizationOptionsB" id="ProjectTwitterB" value="Post to Twitter"  data-theme="b">
+                    <label for="ProjectTwitterB">Post to Twitter</label>
+                    <input type="radio" name="globalizationOptionsB" id="pvtChoiceB" value="Keep it Private" data-theme="b">
+                    <label for="pvtChoiceB">Keep it Private</label>
+                </section>
+            </section>
+            <section class="ui-grid-solo">
+                <input type="submit" class="ui-grid-a" id="submitDataFormB" value="Update Data" data-shadow="true" data-mini="false" data-theme="c">
+            </section>
+        </form>
     </section>
 </section>
 
-<!-- Ideas Page -->
-<section id="viewIdeas" data-role="page" data-theme="a" data-title="ThinkTank Ideas">
+<!-- Activity Page -->
+<section id="viewCompleted" data-role="page" data-theme="b" data-title="ThinkTank Completed">
     <header data-role="header" data-position="fixed"  data-theme="a" data-id="tt_header">
         <h1>ThinkTank</h1>
         <h2>Social Collaboration on a Global Scale</h2>
         <a href="#pageOne" data-direction="reverse" data-icon="home">Home</a>
-        <nav data-role="navbar">
-            <ul>
-                <li><a href="#viewProjects" data-direction="reverse">Projects</a>
-                </li>
-                <!--li><a href="#" class="ui-btn-active ui-state-persist">Load XML via ajax</a>
-                </li-->
-                <li><a href="#viewCompleted" data-transition="fade">Load JSON via ajax</a>
-                </li>
-            </ul>
-        </nav>
+        <a href="#addProject"  data-transition="fade" data-icon="plus">Add Data</a>
+
     </header>
     <section data-role="content">
-        <ul data-role="listview" data-filter="true" data-inset="true" id="ideaXml">
+        <ul data-role="listview" data-filter="true" data-autodividers="" data-inset="true" data-theme="a" id="thinkTankList" >
 
         </ul>
     </section>
-</section>
-
-<!-- Completed Page -->
-<section id="viewCompleted" data-role="page" data-theme="a" data-title="ThinkTank Completed">
-    <header data-role="header" data-position="fixed"  data-theme="a" data-id="tt_header">
-        <h1>ThinkTank</h1>
-        <h2>Social Collaboration on a Global Scale</h2>
-        <a href="#pageOne" data-direction="reverse" data-icon="home">Home</a>
-        <nav data-role="navbar">
-            <ul>
-                <li><a href="#viewProjects" data-direction="reverse">Projects</a>
-                </li>
-                <!--li><a href="#viewIdeas" data-direction="reverse">Load XML via ajax</a>
-                </li-->
-                <li><a href="#" class="ui-btn-active ui-state-persist">Load JSON via ajax</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <section data-role="content">
-        <ul data-role="listview" data-filter="true" data-autodividers="" data-inset="true" data-theme="" id="thinkTankList" >
-
+    <nav data-role="navbar">
+        <ul>
+            <li><a href="#" class="ui-btn-active ui-state-persist">Activities</a>
+            </li>
+            <li><a href="#" id="dataCounter" data-direction="">Data Counter</a>
+            </li>
+            <!--li><a href="#" id="deleteAll" class="">Delete All</a>
+            </li-->
         </ul>
-    </section>
+    </nav>
 </section>
 <!--jQuery & jQuery Mobile framework hosted local copies provided by jQuery.com-->
 <script type="text/javascript" src="jquery-1.8.2.js"></script>
