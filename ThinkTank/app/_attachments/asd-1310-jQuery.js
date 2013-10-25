@@ -32,9 +32,9 @@ $('#addProject').on('pageinit', function () {
     $('.ui-block-b').on("click", function () {
         $('#projectData')[0].reset();
     });
-    //CouchDb plugin .info creates object which I used dor data counter
+    //CouchDb plugin .info creates object which I used for data counter
     $('#storage').on("click", function () {
-        $.couch.db("asdi").info({
+        $.couch.db("asd1310").info({
             success: function (data) {
                 console.log(data);
                 if (data.doc_count === 0) {
@@ -104,7 +104,7 @@ $('#viewProjects').on('pageinit', function () {
 $('#viewProject').on('click', function () {
 
 
-    $.couch.db("asdi").info({
+    $.couch.db("asd1310").info({
         success: function (data) {
             console.log(data);
             if (data.doc_count === 0) {
@@ -125,7 +125,7 @@ $('#viewCompleted').on('pageinit', function () {
     alert("CouchDB call loading JSON Data");
     dynamicData();
     $('#dataCounter').on("click", function () {
-        $.couch.db("asdi").info({
+        $.couch.db("asd1310").info({
             success: function (data) {
                 console.log(data);
                 if (data.doc_count === 0) {
@@ -143,7 +143,7 @@ $('#viewCompleted').on('pageinit', function () {
 
 //Dynamically Creates new links and detail page when new CouchDB document is created
 function dynamicData() {
-    $.couch.db("asdi").view("app/project", {
+    $.couch.db("asd1310").view("app/project", {
         success: function (activities) {
             console.log(activities);
             //Start off with an empty list every time to get the latest from server
@@ -174,7 +174,7 @@ $('#deleteAll').on('click', function (e) {
     });
     var ask = confirm("WARNING ARE YOU SURE YOU WANT TO DELETE ENTIRE DATABASE");
     if (ask) {
-        $.couch.db("asdi").bulkRemove({
+        $.couch.db("asd1310").bulkRemove({
             "docs": deleteBulk
         }, {
             success: function (data) {
@@ -219,7 +219,7 @@ function goToActivityDetailPage(thinkTankId, thinkTankRev, thinkTank, projectNam
         alert("Edit data");
 
         console.log(activityEdit);
-        $.couch.db("asdi").openDoc(activityEdit, {
+        $.couch.db("asd1310").openDoc(activityEdit, {
             success: function (data) {
                 console.log(data);
                 $('#categoryTypeB').val(data.catType[1]).change();
@@ -273,7 +273,7 @@ function goToActivityDetailPage(thinkTankId, thinkTankRev, thinkTank, projectNam
                 activitySaveUpdated.newNote = ["Enter Note on Project or Idea:", $("#detailTxtB").val()];
                 activitySaveUpdated.startDate = ["Enter Start Date:", $("#startDateB").val()];
                 activitySaveUpdated.status = ["Globalize:", $('[name="globalizationOptionsB"]:checked').val()];
-                $.couch.db("asdi").saveDoc(activitySaveUpdated, {
+                $.couch.db("asd1310").saveDoc(activitySaveUpdated, {
                     success: function (data) {
                         console.log(data);
                         console.log(activitySaveUpdated.catType);
@@ -304,7 +304,7 @@ function goToActivityDetailPage(thinkTankId, thinkTankRev, thinkTank, projectNam
         e.preventDefault();
         var ask = confirm("Are you sure you want to delete Data?");
         if (ask) {
-            $.couch.db("asdi").removeDoc(activityDel, {
+            $.couch.db("asd1310").removeDoc(activityDel, {
                 success: function (data) {
                     console.log(data);
                     //$('#thinkTankList').empty();
